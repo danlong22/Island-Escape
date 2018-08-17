@@ -1,4 +1,4 @@
-import time, winsound, openpyxl
+import time, winsound, openpyxl, time
 
 #credits
 def credits():
@@ -14,15 +14,8 @@ def credits():
 
 #initialize game
 move_to = 'beach'
-inventory = []
+inventory = ['machete', 'spear']
 tiger_dead = False
-
-#sounds
-wrong_way = "wrong.wav"
-beach_sound = 'beach.wav'
-coconut_beach_sound = 'coconut_beach.wav'
-ocean_sound = 'ocean.wav'
-tiger_roar = "tiger_roar.wav"
 
 def commands():
 	Actions ={'Move North':'n', 'Move South': 's', 'Move East': 'e', 'Move West': 'w','View Commands': '?', 'View Inventory': 'inventory', 'See Credits': 'credits'}
@@ -40,7 +33,15 @@ print('How To Play:'.center(150,'-') + '\n Island Escape is a text-based adventu
 def location (current_location, n, e, s, w, ):
 	
 	location = current_location 
-	player_input = input('Type the direction you want to go: ')
+
+	#plays a sound file that is named after the location. Saves 1 line per location
+	#------------------------------ name the sound files after the location they will be used in-----------------------
+	winsound.PlaySound('%s.wav'% (location), winsound.SND_ASYNC)
+
+	#receieves player input
+	player_input = input('Type a command or direction: ')
+
+	#handles player commands
 	global move_to
 	if player_input == 'n':
 		if n ==location:
@@ -83,8 +84,6 @@ while game_on == True:
 
 	#coconut beach
 	if move_to == 'coconut beach':
-	
-		
 		print(move_to.center(150, ' ') + '\n')
 		print('''You arrive onto another lonely section of beach. There is a scrawny-looking coconut tree giving a little bit of shade. The ocean stretches to the southern horizon. The North and East are blocked by cliffs. There is another section of beach to the East\n.''')
 		if 'coconut husk' not in inventory:
@@ -102,6 +101,7 @@ while game_on == True:
 
 	#stream
 	if move_to == 'stream':
+		winsound.PlaySound('stream.wav', winsound.SND_ASYNC)
 		print(move_to.center(150, ' ') + '\n')
 		print('A stream empties into the ocean. There is more life here, and you hear various buzzes, calls, and croaks. Some kind of fish are swimming in the water to the East. The oceans stretches to the southern horizon, another section of beach lies to the West, and there is a cave to the North.\n')
 		location('stream', 'cave', 'piranah_stream', 'ocean', 'beach')
@@ -172,28 +172,30 @@ while game_on == True:
 	if move_to =='tiger' and tiger_dead == False:
 		print('You ignore your sense of unease and proceed North...\n')
 		input()
-		print('You hear a growl to your left, you snap your head around and see nothing. You hear another growl and a rustle from your right, but see nothing when you look.\n')
-		winsound.PlaySound(tiger_roar, winsound.SND_FILENAME)
-		#winsound.PlaySound(wrong_way, winsound.SND_FILENAME)
+		print('You hear a rustle to your left, you snap your head around and see nothing. You hear another growl and a rustle from your right, but see nothing when you look.\n')
 		input()
 		if 'spear' in inventory:
 			print('You tighten your grip on your spear, square your stance, and get ready to fight for your life.\n')
 			input()
 		print('You catch a flash of movement from your peripheral vision. Your mind just barely registers a huge feline beast before it is upon you in a frenzy of fur, teeth and claws.\n')
+		winsound.PlaySound('tiger_roar.wav', winsound.SND_ASYNC)
 		if 'spear' in inventory:
 			print('Time slows down as you level your crude spear at the charging tiger. It leaps, rocketing towards you, claws outstretched.\n')
 			input()
-			print('Luck and courage guide the tip of the spear on target, and the beast\'s momentum drives the spear through it\'s heart. You both fall to the ground. You just barely scramble away from it\'s flailing claws as it screeches in fury and agony. It convulses a few times, then lets out it\'s final breath. Fuck your endagered species list.\n')
+			print('Luck and courage guide the tip of the spear on target, and the beast\'s momentum drives the spear through it\'s heart. You both fall to the ground. You just barely scramble away from it\'s flailing claws as it screeches in fury and agony. It convulses a few times, then lets out it\'s final breath. So much for the endagered species list...\n')
 			tiger_dead = True
+			winsound.PlaySound('tiger dies.wav', winsound.SND_FILENAME)
 			print('You step over the tiger\'s dead carcass as you continue on your way. The jungle to the East and West is impassable, there is passable jungle to the South, and there are climbable cliffs to the North.\n')	
 		else:
 			print('Your thin skin and soft nails are no match for the tiger\'s rending claws. Your flesh is peeled off your bones in sheets like skin from an orange. You sqeeze your eyes shut and beg for the release of Death.' + '\n'*33)
+			winsound.PlaySound('scream.wav', winsound.SND_ASYNC)
 			input('GAME OVER')
-		move_to = 'beach'
+			move_to = 'beach'
 	if move_to == 'tiger' and tiger_dead == True:
 		print(move_to.center(150, ' ') + '\n')
 		print('You step over the tiger\'s dead carcass as you continue on your way. The jungle to the East and West is impassable, there is passable jungle to the South, and there are climbable cliffs to the North.\n')	
-		
+		winsound.PlaySound('outer jungle.wav', winsound.SND_ASYNC)
+		location('tiger', 'cliffs', 'tiger', 'deep jungle', 'tiger')
 
 	#nothing
 	#cliffs
@@ -204,26 +206,34 @@ while game_on == True:
 		break
 	#ocean
 	if move_to == 'ocean':
-		print('You dive in, and start swimming in the direction you belive home to be. The current is deceptivly strong, and by the time you realize you\'ve underestimated the ocean, it is too late to swim back. The current pulls you under, and drags your body across jagged coral. You try to scream, but inhale a mouthful of seawater and begin to panic. You claw your way towards the surface, but are again swept to the bottom by the waves...\n')
+		
+		print('You dive in, and start swimming in the direction you belive home to be. The current is deceptivly strong, and by the time you realize you\'ve underestimated the ocean, it is too late to swim back.')
 		input()
+		print('The current pulls you under, and drags your body across jagged coral. You try to scream, but inhale a mouthful of seawater and begin to panic. You claw your way towards the surface, but are again swept to the bottom by the waves...\n')
+		input()
+		winsound.PlaySound('ocean.wav', winsound.SND_ASYNC)
 		print('it\'s not so bad down here...\n')
 		input()
 		print('You feel warm and peacful...\n')
 		input()
-		print('you close your eyes and embrace the darkness.')
+		print('you close your eyes and embrace the darkness.\n')
 		input('GAME OVER')
 		print('\n'*33)
 		inventory = []
 		move_to = 'beach'
 	if move_to == 'piranah_stream':
+		winsound.PlaySound('stream.wav', winsound.SND_ASYNC)
 		print('You\'re a strong swimmer and decide to explore the opposite shore. You get about halfway accross when you feel a sharp pain on your arm. Before you can investigate, you feel more of the same. In a moment of sickening clarity, you realize that you are in piranah infested water.')
 		input()
 		print('You swim hard for the opposite shore, as the carnivorous fish tear your flesh from your body bit by tiny bit.')
 		input()
 		print('in excurutiating pain, you see the opposite shore getting closer and closer. You realize that you can make it and swim harder, willing away the agony of being eaten alive.')
 		input()
-		print('You\'d failed to notice the floating log that had been getting closer and closer this entire time. Far too late, you realize that it is a massive reptile. Your leg explodes in pain as a vice-like grip takes your leg, and drags you down.'*33)
-		input('GAME OVER')
+		print('You\'d failed to notice the floating log that had been getting closer and closer this entire time. Far too late, you realize that it is a massive reptile. Your leg explodes in pain as a vice-like grip takes your leg, and drags you down.')
+		input()
+		winsound.PlaySound('scream.wav', winsound.SND_ASYNC)
+		time.sleep(2)
+		input('\nGAME OVER')
 		inventory = []
 		move_to = 'beach'
 
